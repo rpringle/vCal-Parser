@@ -4,9 +4,25 @@ This code is licensed under the two clause BSD license. See http://opensource.or
 
 IMPORTANT
 
-This code is currently not usable and is a work in progress, though a php-savvy developer could easily use the coded provided as a good starting point for a rudimentary vcal parsing function.
+This code is currently not usable and is a work in progress, though a php-savvy developer could easily use the code provided as a good starting point for a rudimentary vcal parsing function.
 
+TO DO LIST
 
+1. Set up examples showing events passed by:
+
+      A. Database query (MySQL)
+      B. POST
+      C. GET
+
+2. Add code to check for each method and parse variables accordingly.
+
+3. Expand list of vcalendar properties that vCal Parser can properly handle. Hopefully to include all.
+
+4. Add code to create array from user-defined variables.
+
+5. Add code to pass array to parsing function. (Note: pass array by definition, not by reference, as there will be no need to alter values outside of function.)
+
+6. Properly define parser as function.
 
 
 SETUP INSTRUCTIONS
