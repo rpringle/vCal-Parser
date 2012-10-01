@@ -83,7 +83,7 @@ $prodid				= ''; // Your product identifier, ex. 'City Calendar'
 // Clean up the summary by adding Hex'd CRLFs (carriage returns/line feeds)
 // in place of ending </p> tags and removing starting <p> tags.
 
-$event_summary = str_replace("</p>", "\r\n", $event_summary);
+$event_summary = str_replace("</p>", "=0D=0A=", $event_summary);
 
 $event_summary = str_replace("<p>", "", $event_summary);
 
