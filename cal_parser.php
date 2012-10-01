@@ -31,57 +31,87 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 IMPORTANT! SEE THE README DOC FOR SETUP INSTRUCTIONS
 ****************************************************
 
+SETTING A TIMEZONE
+------------------
+
+Since PHP 5.1.0, every call to a date/time function will generate an E_NOTICE if the
+timezone isn't valid, and/or a E_WARNING message if using the system settings or the
+TZ environment variable.
+
+The timezone identifier variable is optional as it may already be set in the INI file.
+vCal Parser defaults to 'America/Denver' for the timezone. If you know the timezone is
+already set in a config file or your INI file, you can comment out the timezone identifier
+variable below.
+
+If you need to change the timezone to something other than Mountain Time, for a list of
+valid timezones, please see: http://www.php.net/manual/en/timezones.php.
 
 */
 
-// Set the default timezone
-date_default_timezone_set('America/Chicago');
+// Default timezone. Comment out or change as needed.
+$timezone_identifier	= 'America/Denver';
 
-// Check for valid dateID
-$dateID = $_GET['dateID'];
+// If timezone identifier exists, set the default timezone
+if ($timezone_identifier)
+{
+	date_default_timezone_set($timezone_identifier);
+}
 
-$filename = "COA_Event_$dateID.vcs";
+
+// Assign an event title. Probably you'll want to pass this
+// programmatically from the event itself.
+$event_title = 'default_event_title';
+
+// Create the file name based on event title
+$filename = $event_title . '.vcs';
+
+// Write out the header information
 header("Content-Type: text/x-vCalendar");
 header("Content-Disposition: inline; filename=$filename");
 
-/** Put mysql connection and query statements here **/
+// User configurable variables. Again, better to pass these
+// programmatically from the event itself.
 
-// DB Connection
-		
-// Tell it which DB to use
-		
-// Calendar of Events query
+$event_summary		= ''; // Summary of the event
+$event_date			= ''; // Year, month, day
+$event_time_start	= ''; // Hour, minute, second
+$event_time_end		= ''; // Hour, minute, second
+$event_location		= ''; // Physical location of event
+$event_url			= ''; // Valid URL for the event
+$prodid				= ''; // Your product identifier, ex. 'City Calendar'
 
-$result = mysql_query($query, $coacalendar);
-		
-$row = mysql_fetch_array($result, MYSQL_ASSOC);
-			
-// Replace ending p tags with Hex'd CRLF
-$DescDump = str_replace("</p>", "", $row['summary']);
-// Remove starting p tags
-$DescDump = str_replace("<p>", "", $DescDump);
+// Clean up the summary by adding Hex'd CRLFs (carriage returns/line feeds)
+// in place of ending </p> tags and removing starting <p> tags.
 
-// Convert dates
-$vCalStart = date("Ymd", strtotime($row['eventDate']));
-$vCalStart .= date("\THi00", strtotime($row['eventTimeStart']));
+$event_summary = str_replace("</p>", "\r\n", $event_summary);
 
-if ($row['eventTimeEnd'] <> "") {
-	$vCalEnd = date("Ymd", strtotime($row['eventDate']));
-	$vCalEnd .= date("\THi00", strtotime($row['eventTimeEnd']));
-	}
+$event_summary = str_replace("<p>", "", $event_summary);
+
+// Convert start date/time to proper vcal format
+$vcal_start = date("Ymd", strtotime($event_date));
+$vcal_start .= date("\THi00", strtotime($event_time_start));
+
+// If there's an end time, convert it as well
+if ($event_time_end)
+{
+	$vcal_end = date("Ymd", strtotime($event_date));
+	$vcal_end .= date("\THi00", strtotime($event_time_end));
+}
+
+// Output the rest of the vcal information
 ?>
 BEGIN:VCALENDAR
 VERSION:1.0
-PRODID:COA Web Calendar
+PRODID:<?php echo $prodid . "\n"; ?>
 TZ:-06
 BEGIN:VEVENT
-SUMMARY:City of Aurora - <?php echo $row['title'] . "\n"; ?>
-DESCRIPTION;ENCODING=QUOTED-PRINTABLE: <?php echo $DescDump . "\n"; ?>
-DTSTART:<?php echo $vCalStart . "\n"; ?>
-<?php if ($row['eventTimeEnd'] <> "") { ?>
-DTEND:<?php echo $vCalEnd . "\n"; ?>
+SUMMARY:<?php echo $title . "\n"; ?>
+DESCRIPTION;ENCODING=QUOTED-PRINTABLE: <?php echo $event_summary . "\n"; ?>
+DTSTART:<?php echo $vcal_start . "\n"; ?>
+<?php if ($vcal_end) { ?>
+DTEND:<?php echo $vcal_end . "\n"; ?>
 <?php } ?>
-LOCATION:<?php echo $row['location'] . "\n"; ?>
-URL:http://www.aurora-il.org/detail.php?dateID=<?php echo $dateID . "\n"; ?>
+LOCATION:<?php echo $event_location . "\n"; ?>
+URL:<?php echo $event_url . "\n"; ?>
 END:VEVENT
 END:VCALENDAR
