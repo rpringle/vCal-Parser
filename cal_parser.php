@@ -60,34 +60,26 @@ if (!isset ($timezone_default))
 	date_default_timezone_set($timezone_identifier);
 }
 
-// Assign an event title. Probably you'll want to pass this
-// programmatically from the event itself.
-$event_title = 'default_event_title';
-
-// Create the file name based on event title
-$filename = $event_title . '.vcs';
-
-// Write out the header information
-header("Content-Type: text/x-vCalendar");
-header("Content-Disposition: inline; filename=$filename");
-
-// User configurable variables. Again, better to pass these
+// User configurable variables. Better to pass these
 // programmatically from the event itself.
 
-$event_summary		= ''; // Summary of the event
-$event_date			= ''; // Year, month, day
+$event_summary		= ''; // Summary (aka Title) of the event
+$event_description	= ''; // Description of the event
+$event_date		= ''; // Year, month, day
 $event_time_start	= ''; // Hour, minute, second
 $event_time_end		= ''; // Hour, minute, second
 $event_location		= ''; // Physical location of event
-$event_url			= ''; // Valid URL for the event
-$prodid				= ''; // Your product identifier, ex. 'City Calendar'
+$event_url		= ''; // Valid URL for the event
+$prodid			= ''; // Your 'product' identifier, ex. 'City Calendar'
 
-// Clean up the summary by adding Hex'd CRLFs (carriage returns/line feeds)
+// Create the file name based on event summary
+$filename = $event_summary . '.vcs';
+
+// Clean up the description by adding Hex'd CRLFs (carriage return/line feed)
 // in place of ending </p> tags and removing starting <p> tags.
 
-$event_summary = str_replace("</p>", "=0D=0A=", $event_summary);
-
-$event_summary = str_replace("<p>", "", $event_summary);
+$event_description = str_replace("</p>", "=0D=0A=", $event_description);
+$event_description = str_replace("<p>", "", $event_description);
 
 // Convert start date/time to proper vcal format
 $vcal_start = date("Ymd", strtotime($event_date));
@@ -100,6 +92,10 @@ if ($event_time_end)
 	$vcal_end .= date("\THi00", strtotime($event_time_end));
 }
 
+// Write out the header information
+header("Content-Type: text/x-vCalendar");
+header("Content-Disposition: inline; filename=$filename");
+
 // Output the rest of the vcal information
 ?>
 BEGIN:VCALENDAR
@@ -107,8 +103,8 @@ VERSION:1.0
 PRODID:<?php echo $prodid . "\n"; ?>
 TZ:-06
 BEGIN:VEVENT
-SUMMARY:<?php echo $title . "\n"; ?>
-DESCRIPTION;ENCODING=QUOTED-PRINTABLE: <?php echo $event_summary . "\n"; ?>
+SUMMARY:<?php echo $event_summary . "\n"; ?>
+DESCRIPTION;ENCODING=QUOTED-PRINTABLE: <?php echo $event_description . "\n"; ?>
 DTSTART:<?php echo $vcal_start . "\n"; ?>
 <?php if ($vcal_end) { ?>
 DTEND:<?php echo $vcal_end . "\n"; ?>
