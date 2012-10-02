@@ -39,24 +39,26 @@ timezone isn't valid, and/or a E_WARNING message if using the system settings or
 TZ environment variable.
 
 The timezone identifier variable is optional as it may already be set in the INI file.
-vCal Parser defaults to 'America/Denver' for the timezone. If you know the timezone is
-already set in a config file or your INI file, you can comment out the timezone identifier
-variable below.
+vCal Parser checks to see if the default timezone is set in the INI file first. If it isn't,
+it defaults to 'America/Denver' for the timezone.
 
 If you need to change the timezone to something other than Mountain Time, for a list of
 valid timezones, please see: http://www.php.net/manual/en/timezones.php.
 
+Just edit the line $timezone_identifier = 'America/Denver'; and insert a valid timezone.
+Alternately, you can set the default timezone in the INI file.
+
 */
 
-// Default timezone. Comment out or change as needed.
-$timezone_identifier	= 'America/Denver';
+// Check to see if default timezone is set in INI
+$timezone_default = ini_get('date_default_timezone');
 
-// If timezone identifier exists, set the default timezone
-if ($timezone_identifier)
+if (!isset ($timezone_default))
 {
+	// Default timezone not set in INI, so we set it here.
+	$timezone_identifier = 'America/Denver';
 	date_default_timezone_set($timezone_identifier);
 }
-
 
 // Assign an event title. Probably you'll want to pass this
 // programmatically from the event itself.
