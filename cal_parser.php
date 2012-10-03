@@ -61,16 +61,17 @@ if (!isset ($timezone_default))
 }
 
 // User configurable variables. Better to pass these
-// programmatically from the event itself.
+// programmatically from the event itself, but set here
+// with test values for initial use.
 
-$event_summary		= ''; // Summary (aka Title) of the event
-$event_description	= ''; // Description of the event
-$event_date		= ''; // Year, month, day
-$event_time_start	= ''; // Hour, minute, second
-$event_time_end		= ''; // Hour, minute, second
-$event_location		= ''; // Physical location of event
-$event_url		= ''; // Valid URL for the event
-$prodid			= ''; // Your 'product' identifier, ex. 'City Calendar'
+$event_summary		= 'Test Title'; // Summary (aka Title) of the event
+$event_description	= 'Test Description of the event'; // Description of the event
+$event_date			= '20121031'; // Year, month, day
+$event_time_start	= '083000'; // Hour, minute, second
+$event_time_end		= '103000'; // Hour, minute, second
+$event_location		= 'Test location, anywhere, USA'; // Physical location of event
+$event_url			= 'http://www.testville.com'; // Valid URL for the event
+$prodid				= 'Test Calendar'; // Your 'product' identifier, ex. 'City Calendar'
 
 // Create the file name based on event summary
 $filename = $event_summary . '.vcs';
